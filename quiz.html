@@ -1,0 +1,145 @@
+//Html Code for quiz app
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz App</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="quiz-container">
+    <div id="quiz"></div>
+    <button id="submit">Submit Quiz</button>
+</div>
+
+<div id="results"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+// Css code for quiz app
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+.quiz-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#results {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+
+const quizData = [
+    {
+        question: "What is the capital of France?",
+        answers: {
+            a: "Paris",
+            b: "London",
+            c: "Berlin"
+        },
+        correctAnswer: "a"
+    },
+    {
+        question: "Who wrote 'To Kill a Mockingbird'?",
+        answers: {
+            a: "Harper Lee",
+            b: "Jane Austen",
+            c: "F. Scott Fitzgerald"
+        },
+        correctAnswer: "a"
+    },
+    {
+        question: "What is the largest planet in our solar system?",
+        answers: {
+            a: "Mars",
+            b: "Jupiter",
+            c: "Saturn"
+        },
+        correctAnswer: "b"
+    }
+];
+
+
+
+//Java Script code for Quiz app
+
+const quizContainer = document.getElementById('quiz');
+const resultsContainer = document.getElementById('results');
+const submitButton = document.getElementById('submit');
+
+function buildQuiz() {
+    const output = [];
+
+    quizData.forEach((currentQuestion, questionNumber) => {
+        const answers = [];
+        for (let letter in currentQuestion.answers) {
+            answers.push(
+                `<label>
+                    <input type="radio" name="question${questionNumber}" value="${letter}">
+                    ${letter} : ${currentQuestion.answers[letter]}
+                </label>`
+            );
+        }
+
+        output.push(
+            `<div class="question"> ${currentQuestion.question} </div>
+            <div class="answers"> ${answers.join('')} </div>`
+        );
+    });
+
+    quizContainer.innerHTML = output.join('');
+}
+
+function showResults() {
+    const answerContainers = quizContainer.querySelectorAll('.answers');
+
+    let numCorrect = 0;
+
+    quizData.forEach((currentQuestion, questionNumber) => {
+        const answerContainer = answerContainers[questionNumber];
+        const selector = `input[name=question${questionNumber}]:checked`;
+        const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+        if (userAnswer === currentQuestion.correctAnswer) {
+            numCorrect++;
+        } else {
+            answerContainer.querySelector(`input[value=${currentQuestion.correctAnswer}]`).parentElement.style.color = 'green';
+        }
+    });
+
+    resultsContainer.innerHTML = `${numCorrect} out of ${quizData.length}`;
+}
+
+buildQuiz();
+
+submitButton.addEventListener('click', showResults);
